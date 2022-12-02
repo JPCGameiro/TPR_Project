@@ -1,7 +1,9 @@
 import spur
 import time
+from auxFunctions import *
 
 
+#Create a python file and put hello world code inside it
 def good_behaviour1():
     #Create the connection
     shell = spur.SshShell(hostname="192.168.1.1", username="labcom", password="labcom")
@@ -21,7 +23,7 @@ def good_behaviour1():
     #delay random
     shell.run(["touch", "helloworld.py"])
     #delay random
-    shell.run(["echo",">", "", ""])
+    shell.run(["echo",">>", "print('hello world')", "helloworld.py"])
     #delay random
     shell.run(["cat", "helloworld.py"])
     #delay random
@@ -43,7 +45,7 @@ def good_behaviour1():
 
 
 
-
+#Run algorithm tests
 def good_behaviour2(shell):
     #Create the connection
     shell = spur.SshShell(hostname="192.168.1.1", username="labcom", password="labcom")
@@ -52,54 +54,39 @@ def good_behaviour2(shell):
     shell.run(["cd", "NotImportantFiles"])
     shell.run(["cd", "data-structures-algorithms-python-master"])
     shell.run(["cd", "algorithms"])
-    shell.run(["cd", "1_BinarySearch"])
-    shell.run(["python3", "binary_search_exercise_solution.py"])
-    shell.run(["python3", "binarysearch.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "2_BubbleSort"])
-    shell.run(["python3", "bubble_sort_exercise_solution.py"])
-    shell.run(["python3", "bubble_sort.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "3_QuickSort"])
-    shell.run(["python3", "quick_sort_exercise_soluiton_lomuto.py"])
-    shell.run(["python3", "quick_sort.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "4_InsertionSort"])
-    shell.run(["python3", "insertion_sort_exercise_solution.py"])
-    shell.run(["python3", "insertion_sort.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "5_MergeSort"])
-    shell.run(["python3", "merge_sort_exercise_solution.py"])
-    shell.run(["python3", "merge_sort_primitive.py"])
-    shell.run(["python3", "merge_sort_final.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "6_ShellSort"])
-    shell.run(["python3", "shell_sort.py"])
-    shell.run(["python3", "shell_sort_exercise_solution.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "7_SelectionSort"])
-    shell.run(["python3", "selection_sort_exercise_solution.py"])
-    shell.run(["python3", "selection_sort.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "8_DepthFirstSearch"])
-    shell.run(["python3", "dfs_exercise.py"])
-    shell.run(["python3", "dfs.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "8_recursion"])
-    shell.run(["python3", "recursion.py"])
-    shell.run(["cd", ".."])
-    shell.run(["cd", "9_BreadthFirstSearch"])
-    shell.run(["python3", "bfs.py"])
-    shell.run(["python3", "bfs_exercise_solution.py"])
-    shell.run(["cd", "../../../../.."])
+    
+    test_algs1(shell)
+    test_algs2(shell)
+    test_algs3(shell)
+    test_algs4(shell)
+    test_algs5(shell)
+    test_algs6(shell)
+    test_algs7(shell)
+    test_algs8(shell)
+    test_algs9(shell)
+    test_algs10(shell)
+
+    shell.run(["cd", "../../../.."])
 
     #Close the connection
     shell.close()
 
 
 
-def good_behavior3(shell):
-    pass
+def good_behavior3():
+    #Create the connection
+    shell = spur.SshShell(hostname="192.168.1.1", username="labcom", password="labcom")
+
+    shell.run(["ip", "a"])
+    shell.run(["lscpu"])
+    shell.run(["ps", "aux"])
+
+    #Close the connection
+    shell.close()
+
+
+
+
 
 #Execute commands
 with shell:

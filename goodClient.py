@@ -1,6 +1,13 @@
 import spur
 import time
-from auxFunctions import *
+
+#Auxiliary function to run algogithms
+def test_algs(shell, dir, program_list):
+	shell.run(["cd", dir])
+	for p in program_list:
+		shell.run(["python3", p])
+	shell.run(["cd", ".."])
+
 
 
 #Create a python file and put hello world code inside it
@@ -55,16 +62,16 @@ def good_behaviour2(shell):
     shell.run(["cd", "data-structures-algorithms-python-master"])
     shell.run(["cd", "algorithms"])
     
-    test_algs1(shell)
-    test_algs2(shell)
-    test_algs3(shell)
-    test_algs4(shell)
-    test_algs5(shell)
-    test_algs6(shell)
-    test_algs7(shell)
-    test_algs8(shell)
-    test_algs9(shell)
-    test_algs10(shell)
+    test_algs(shell, "1_BinarySearch", ["binary_search_exercise_solution.py", "binarysearch.py"])
+    test_algs(shell, "2_BubbleSort", ["bubble_sort_exercise_solution.py", "bubble_sort.py"])
+    test_algs(shell, "3_QuickSort", ["quick_sort_exercise_soluiton_lomuto.py", "quick_sort.py"])
+    test_algs(shell, "4_InsertionSort", ["insertion_sort_exercise_solution.py", "insertion_sort.py"])
+    test_algs(shell, "5_MergeSort", ["merge_sort_exercise_solution.py", "merge_sort_primitive.py", "merge_sort_final.py"])
+    test_algs(shell, "6_ShellSort", ["shell_sort.py", "shell_sort_exercise_solution.py"])
+    test_algs(shell, "7_SelectionSort", ["selection_sort_exercise_solution.py", "selection_sort.py"])
+    test_algs(shell, "8_DepthFirstSearch", ["dfs_exercise.py", "dfs.py"])
+    test_algs(shell, "8_recursion", ["recursion.py"])
+    test_algs(shell, "9_BreadthFirstSearch", ["bfs.py", "bfs_exercise_solution.py"])
 
     shell.run(["cd", "../../../.."])
 

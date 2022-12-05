@@ -41,3 +41,11 @@ for i in range(0, numFiles):
     ssh.close()
 
     #Random Delay - TEMOS DE FALAR SOBRE ESTE
+
+
+#Delete traces of the chunks
+ssh.connect('192.168.1.1', username="labcom", password="labcom")
+stdin, stdout, stderr = ssh.exec_command('cd Project/ImportantFiles; rm -rf newfile*; ls -l')
+s = str(stdout.read())
+print(s)
+ssh.close()

@@ -44,7 +44,7 @@ def good_behaviour1(ssh):
 
 
 
-
+#Execute a series of algorithmic tests
 def good_behaviour2(ssh):
     #Create the connection
     ssh.connect('192.168.1.1', username="labcom", password="labcom")
@@ -79,14 +79,27 @@ def good_behaviour2(ssh):
     test_algs(ssh, "9_BreadthFirstSearch", ["bfs.py", "bfs_exercise_solution.py"])
     print("All Done")
 
-    #shell.run(["cd", "../../../.."])
-
     #Close the connection
     ssh.close()
 
-def good_behavior3(shell):
-    pass
+#Execute a computational intensive program
+def good_behaviour3(ssh):
+    #Open Connection
+    ssh.connect('192.168.1.1', username="labcom", password="labcom")
+    
+    
+    stdin, stdout, stderr = ssh.exec_command('ls -l; cd Project/; ls -l; cd NotImportantFiles/; ls -l cd MD5/; ls -l;')
+    print(stdout.read())
+    #Random Delay 
 
+    #PRINT AO FICHEIRO???
+ 
+    stdin, stdout, stderr = ssh.exec_command('cd Project/; cd NotImportantFiles/MD5; python3 decriptmd5.py -f random.txt')
+    print(stdout.read())
+    #Random Delay
+
+    #Close the connection
+    ssh.close()
 
 
 
@@ -95,4 +108,6 @@ ssh = SSHClient()
 ssh.load_system_host_keys()
 
 #good_behaviour1(ssh)
-good_behaviour2(ssh)
+#good_behaviour2(ssh)
+good_behaviour3(ssh)
+

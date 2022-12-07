@@ -17,26 +17,67 @@ def test_algs(ssh, dir, program_list):
 def good_behaviour1(ssh):
     #Create the connection
     ssh.connect('192.168.1.1', username="labcom", password="labcom")
+    channel = ssh.invoke_shell()
     
-    stdin, stdout, stderr = ssh.exec_command('ls -l; cd Project/; ls -l; cd NotImportantFiles/; ls -l')
-    print(stdout.read())
-    #Random Delay
+    channel.send("cd Project/\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
 
-    stdin, stdout, stderr = ssh.exec_command('ls -l; cd Project/; ls -l; cd NotImportantFiles/; ls -l; rm -rf helloworld.py')
-    print(stdout.read())
-    #Random Delay
+    channel.send("ls -l\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
 
-    stdin, stdout, stderr = ssh.exec_command('cd Project/NotImportantFiles/; touch helloworld.py')
-    print(stdout.read())
-    #Random Delay
+    channel.send("cd NotImportantFiles/\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
+
+    channel.send("ls -l\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
+
+    channel.send("rm -rf helloworld.py\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
+
+    channel.send("ls -l\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
+
+    channel.send("touch helloworld.py\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
+
+    channel.send("ls -l\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
  
-    stdin, stdout, stderr = ssh.exec_command('cd Project/NotImportantFiles/; ls; echo "print(\'helloFworld\')" >> helloworld.py')
-    print(stdout.read())
-    #Random Delay
+    channel.send('echo "print(\'helloworld\')" >> helloworld.py\n')
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
 
-    stdin, stdout, stderr = ssh.exec_command('cd Project/NotImportantFiles/; python3 helloworld.py')
-    print(stdout.read())
-    #Random Delay
+    channel.send("python3 helloworld.py\n")
+    while not channel.recv_ready():
+        time.sleep(0.5)
+    out = channel.recv(9999)
+    print(out.decode("ascii"))
 
     #Close the connection
     ssh.close()
@@ -107,7 +148,6 @@ def good_behaviour3(ssh):
 ssh = SSHClient()
 ssh.load_system_host_keys()
 
-#good_behaviour1(ssh)
+good_behaviour1(ssh)
 #good_behaviour2(ssh)
-good_behaviour3(ssh)
-
+#good_behaviour3(ssh)

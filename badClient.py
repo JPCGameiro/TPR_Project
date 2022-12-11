@@ -43,7 +43,7 @@ for i in range(0, numFiles):
     ssh.close()
 
     #Random Delay - TEMOS DE FALAR SOBRE ESTE
-    time.sleep(abs(random.gauss(10,5)))                #+- 0-20s
+    time.sleep(abs(random.gauss(90,75)))                #+- 0-3 min
 
 
 

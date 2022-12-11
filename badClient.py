@@ -1,6 +1,8 @@
 from paramiko import SSHClient
 from scp import SCPClient
 import sys
+import random
+import time
 
 # Define progress callback that prints the current percentage completed for the file
 def progress(filename, size, sent):
@@ -41,6 +43,8 @@ for i in range(0, numFiles):
     ssh.close()
 
     #Random Delay - TEMOS DE FALAR SOBRE ESTE
+    time.sleep(abs(random.gauss(10,5)))                #+- 0-20s
+
 
 
 #Delete traces of the chunks

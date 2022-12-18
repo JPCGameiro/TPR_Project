@@ -9,6 +9,13 @@ sera que temos de mudar o pktHandler? pq portos
 
 periodicity --> é so pra janelas sequenciais? por causa do enunciado do guiao
 
+no obsWindows:
+
+eu meti no -w e -s valores de default however se n metermos no comando qnd chamamos da erro xD
+
+meti -w 120 -s 5   --> ns se isto ta bem os nomes sao um bocado confusos mas eu acho q é assim a correspondencia
+
+
 ----------------------------------
 pktSampling -> deve chegar com a rede /24 e 0.0.0.0/0 (por causa do if, ve upload e download)
 

@@ -2,7 +2,7 @@ import argparse
 import scipy.stats as stats
 import numpy as np
 import matplotlib.pyplot as plt
-from baseObsWindows import slidingMultObsWindow
+
 import os
 
    

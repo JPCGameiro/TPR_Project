@@ -1,0 +1,6 @@
+netaddr
+pyshark
+numpy
+matplotlib
+scipy
+pyqt5

@@ -6,3 +6,18 @@ definar o sampling delta ???
 manter aquele display filter =  ip?? eu acho q aqui é algo proprio ao nosso problema
 
 sera que temos de mudar o pktHandler? pq portos
+
+periodicity --> é so pra janelas sequenciais? por causa do enunciado do guiao
+
+----------------------------------
+pktSampling -> deve chegar com a rede /24 e 0.0.0.0/0 (por causa do if, ve upload e download)
+
+delta de 1 sec --> perguntar
+
+display filter --> deixar o que ta la ou meter coisas mais especificas tipo ssh e port 22
+
+pktHandler --> n é necessario mudar
+
+janelas 2/3 minutos --> 20/30 segs pq n temos assim tantos dados (nao sao janelas q apanehm tipo 3 picos?)
+
+checkar o multiwindow

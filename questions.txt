@@ -16,6 +16,19 @@ eu meti no -w e -s valores de default however se n metermos no comando qnd chama
 meti -w 120 -s 5   --> ns se isto ta bem os nomes sao um bocado confusos mas eu acho q é assim a correspondencia
 
 
+Com base no q tive a ver do guiao 3:
+MAS NS
+eu acho q devemos ter as capturas dos clients e o atacante em separado pra termos as classes: client1, clien2, client3, attacker
+
+ex5 e ex6:
+falta fzr os silencios o wavelet
+
+Devemos criar estes datasets ou seja, ex5 e ex6?
+three different datasets: (A) only time-independent features, (B) time-dependent
+and silence/activity features, and (C) time-dependent, silence/activity and scalogram features
+
+eu admiti so o sub-dataset q serve pra anomaly detection, sera que precisamos de fzr os outros?
+
 ----------------------------------
 pktSampling -> deve chegar com a rede /24 e 0.0.0.0/0 (por causa do if, ve upload e download)
 

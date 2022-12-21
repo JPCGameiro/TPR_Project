@@ -47,21 +47,24 @@ plt.ion()
 nfig=1
 
 ## -- 3 -- ##
-features_c1=np.loadtxt("Client1_obs_features.dat")
-features_c2=np.loadtxt("Client2_obs_features.dat")
-features_c3=np.loadtxt("Client3_obs_features.dat")
-features_attacker=np.loadtxt("Attacker_obs_features.dat")
+#Load data from text file
+features_c1=np.loadtxt("test_data_obs_features.dat")
+features_c2=np.loadtxt("test_data_obs_features.dat")
+features_c3=np.loadtxt("test_data_obs_features.dat")
+features_attacker=np.loadtxt("test_data_obs_features.dat")
 
+#Returning arrays with ones of the size of the features extracted
 oClass_c1=np.ones((len(features_c1),1))*0
 oClass_c2=np.ones((len(features_c2),1))*1
 oClass_c3=np.ones((len(features_c3),1))*2
 oClass_attacker=np.ones((len(features_attacker),1))*3
 
+#Stack arrays of features and classes vertically
 features=np.vstack((features_c1,features_c2,features_c3,features_attacker))
 oClass=np.vstack((oClass_c1,oClass_c2,oClass_c3,features_attacker))
 
 print('Train Stats Features Size:',features.shape)
-
+'''
 # ## -- 4 -- ##
 # plt.figure(4)
 # plotFeatures(features,oClass,0,1)#0,8
@@ -93,6 +96,7 @@ print('Train Stats Features Size:',features.shape)
 
 # ## -- 8 -- ##
 # #:1
+
 percentage=0.5
 pC1=int(len(features_c1)*percentage)
 trainFeatures_c1=features_c1[:pC1,:]
@@ -363,3 +367,4 @@ i2trainFeaturesN=i2trainScaler.transform(i2trainFeatures)
 # for i in range(nObsTest):
 #     print('Obs: {:2} ({:<8}): Classification->{}'.format(i,Classes[o3testClass[i][0]],Classes[LT[i]]))
 
+'''

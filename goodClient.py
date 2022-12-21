@@ -318,19 +318,23 @@ def good_behaviour3(ssh):
 ssh = SSHClient()
 ssh.load_system_host_keys()
 
-i = random.uniform(0, 1)
-while (i < 0.5):
-    i = randrange(3)
-    if i == 0:
-        good_behaviour1(ssh)
-    elif i == 1:
-        good_behaviour2(ssh)
-    elif i == 2:
-        good_behaviour3(ssh)
-
+while True:
     i = random.uniform(0, 1)
-    #NOTE: FAZ SENTIDO TER AQUI UM? FALAR
-    time.sleep(abs(random.gauss(10,5)))                    #+- 0-20
+    while (i < 0.5):
+        i = randrange(3)
+        if i == 0:
+            good_behaviour1(ssh)
+        elif i == 1:
+            good_behaviour2(ssh)
+        elif i == 2:
+            good_behaviour3(ssh)
+
+        i = random.uniform(0, 1)
+        #NOTE: FAZ SENTIDO TER AQUI UM? FALAR
+        time.sleep(abs(random.gauss(10,5)))                    #+- 0-20
+    
+    #Random 1 - 10 minutes interval
+    time.sleep(random.randint(1,10))
 
 
 

@@ -334,7 +334,7 @@ while True:
         time.sleep(abs(random.gauss(10,5)))                    #+- 0-20
     
     #Random 1 - 10 minutes interval
-    time.sleep(random.randint(1,10))
+    time.sleep(random.randint(60,600))
 
 
 

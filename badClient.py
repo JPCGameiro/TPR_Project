@@ -121,4 +121,4 @@ while True:
 
     print("ATACKER: File copied")
     #Random sleep 0 - 10 minutes
-    time.sleep(random.randint(1,10))
+    time.sleep(random.randint(60,600))

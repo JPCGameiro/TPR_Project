@@ -4,3 +4,4 @@ numpy
 matplotlib
 scipy
 pyqt5
+scikit-learn

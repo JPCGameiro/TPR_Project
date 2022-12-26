@@ -21,7 +21,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('-i', '--input', nargs='?',required=True, help='input file')
     parser.add_argument('-w', '--widths', nargs='*',required=False, help='list of observation windows widths',default=120)  #2 minutos
-    parser.add_argument('-s', '--slide', nargs='?',required=False, help='observation windows slide value',default=5)        #decision period of 5 secs
+    parser.add_argument('-s', '--slide', nargs='?',required=False, help='observation windows slide value',default=20)        #deslizar 20
     args=parser.parse_args()
     
     fileInput=args.input

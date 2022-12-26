@@ -48,12 +48,13 @@ nfig=1
 
 ## -- 3 -- ##
 #Load data from text file
-features_c1=np.loadtxt("test_data_obs_features.dat")
-features_c2=np.loadtxt("test_data_obs_features.dat")
-features_c3=np.loadtxt("test_data_obs_features.dat")
-features_attacker=np.loadtxt("test_data_obs_features.dat")
+features_c1=np.loadtxt("client1_d1_obs_features.dat")
+features_c2=np.loadtxt("client2_d1_obs_features.dat")
+features_c3=np.loadtxt("client3_d1_obs_features.dat")
+features_attacker=np.loadtxt("goodAndBad_d1_obs_features.dat")      #temporario so pa testar
 
 #Returning arrays with ones of the size of the features extracted
+
 oClass_c1=np.ones((len(features_c1),1))*0
 oClass_c2=np.ones((len(features_c2),1))*1
 oClass_c3=np.ones((len(features_c3),1))*2
@@ -61,14 +62,16 @@ oClass_attacker=np.ones((len(features_attacker),1))*3
 
 #Stack arrays of features and classes vertically
 features=np.vstack((features_c1,features_c2,features_c3,features_attacker))
-oClass=np.vstack((oClass_c1,oClass_c2,oClass_c3,features_attacker))
+oClass=np.vstack((oClass_c1,oClass_c2,oClass_c3,oClass_attacker))
 
-print('Train Stats Features Size:',features.shape)
-'''
-# ## -- 4 -- ##
+#NAO CONSEGUI DESENHAR O PLOT
+# print('Train Stats Features Size:',features.shape)
+
+# # ## -- 4 -- ##
 # plt.figure(4)
 # plotFeatures(features,oClass,0,1)#0,8
 
+#ISTO AQUI É A PARTE DOS SILENCIOS
 # ## -- 5 -- ##
 # features_browsingS=np.loadtxt("Browsing_obs_sil_features.dat")
 # features_ytS=np.loadtxt("YouTube_obs_sil_features.dat")
@@ -82,6 +85,7 @@ print('Train Stats Features Size:',features.shape)
 # plotFeatures(featuresS,oClass,0,2)
 
 
+#ISTO AQUI É A PARTE DO WAVELET
 # ## -- 7 -- ##
 # features_browsingW=np.loadtxt("Browsing_obs_per_features.dat")
 # features_ytW=np.loadtxt("YouTube_obs_per_features.dat")
@@ -94,6 +98,8 @@ print('Train Stats Features Size:',features.shape)
 # plt.figure(7)
 # plotFeatures(featuresW,oClass,3,6)
 
+
+#ESTE AQUI ESTA +-
 # ## -- 8 -- ##
 # #:1
 
@@ -134,41 +140,42 @@ i2trainFeaturesN=i2trainScaler.transform(i2trainFeatures)
 # i3trainScaler = MaxAbsScaler().fit(i3trainFeatures)  
 # i3trainFeaturesN=i3trainScaler.transform(i3trainFeatures)
 
-# i3AtestFeaturesN=i2trainScaler.transform(i3testFeatures)
+# i3AtestFeaturesN=i2trainScaler.transform(i3testFeatures)          #sera q temos de fzr este? pq anomalias
 # i3CtestFeaturesN=i3trainScaler.transform(i3testFeatures)
 
-# print(np.mean(i2trainFeaturesN,axis=0))
-# print(np.std(i2trainFeaturesN,axis=0))
+print(np.mean(i2trainFeaturesN,axis=0))
+print(np.std(i2trainFeaturesN,axis=0))
 
 # ## -- 10 -- ##
-# from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA
 
-# pca = PCA(n_components=3, svd_solver='full')
+pca = PCA(n_components=3, svd_solver='full')
 
-# i2trainPCA=pca.fit(i2trainFeaturesN)
-# i2trainFeaturesNPCA = i2trainPCA.transform(i2trainFeaturesN)
+i2trainPCA=pca.fit(i2trainFeaturesN)
+i2trainFeaturesNPCA = i2trainPCA.transform(i2trainFeaturesN)
 
 # i3trainPCA=pca.fit(i3trainFeaturesN)
 # i3trainFeaturesNPCA = i3trainPCA.transform(i3trainFeaturesN)
 
-# i3AtestFeaturesNPCA = i2trainPCA.transform(i3AtestFeaturesN)
+# i3AtestFeaturesNPCA = i2trainPCA.transform(i3AtestFeaturesN)      #sera q temos de fzr este? pq anomalias
 # i3CtestFeaturesNPCA = i3trainPCA.transform(i3CtestFeaturesN)
 
-# print(i2trainFeaturesNPCA.shape,o2trainClass.shape)
+print(i2trainFeaturesNPCA.shape,o2trainClass.shape)
 # plt.figure(8)
 # plotFeatures(i2trainFeaturesNPCA,o2trainClass,0,1)
 
+#ACHO QUE TEMOS DE USAR A PARTIR DAQUI ATE AO 15 e o 21 do guiao
 # ## -- 11 -- ##
 # from sklearn.preprocessing import MaxAbsScaler
 # centroids={}
-# for c in range(2):  # Only the first two classes
+# for c in range(3):  # Only the first three classes
 #     pClass=(o2trainClass==c).flatten()
 #     centroids.update({c:np.mean(i2trainFeaturesN[pClass,:],axis=0)})
 # print('All Features Centroids:\n',centroids)
 
 # AnomalyThreshold=1.2
 # print('\n-- Anomaly Detection based on Centroids Distances --')
-# nObsTest,nFea=i3AtestFeaturesN.shape
+# nObsTest,nFea=i3AtestFeaturesN.shape                                    #falta nos esta variavel
 # for i in range(nObsTest):
 #     x=i3AtestFeaturesN[i]
 #     dists=[distance(x,centroids[0]),distance(x,centroids[1])]
@@ -366,5 +373,3 @@ i2trainFeaturesN=i2trainScaler.transform(i2trainFeatures)
 # nObsTest,nFea=i3CtestFeaturesNPCA.shape
 # for i in range(nObsTest):
 #     print('Obs: {:2} ({:<8}): Classification->{}'.format(i,Classes[o3testClass[i][0]],Classes[LT[i]]))
-
-'''

@@ -1,44 +1,24 @@
-Usar isto para registar comandos/cenas feitas até ao momento
-
 1) Qualitative to quantitative data
-    -> python3 basePktSampling_Remastered.py -i Captures/goodBadBehavior.pcapng -c 192.168.1.0/24 -s 0.0.0.0/0
-    -> python3 basePktSampling_Remastered.py -i Captures/goodBadBehavior2.pcapng -c 192.168.1.0/24 -s 0.0.0.0/0
-    -> generates goodBadBehavior.pcapng_d1.dat and goodBadBehavior2.pcapng_d1.dat
-
-2) Sliding Window (size of 10 seconds, 3 second period for decisions)
-    -> python3 baseObsWindows_Remastered.py -i goodBadBehavior.pcapng_d1.dat -w 10 -s 3
-    -> python3 baseObsWindows_Remastered.py -i goodBadBehavior2.pcapng_d1.dat -w 10 -s 3
-    -> generates goodBadBehaviorpcapng_d1_obs_s3 and goodBadBehavior2pcapng_d1_obs_s3
-
-3) Extracting features
-    -> python3 baseExtractFeatures_Remastered.py -i goodBadBehaviorpcapng_d1_obs_s3 -w 10
-    -> python3 baseExtractFeatures_Remastered.py -i goodBadBehavior2pcapng_d1_obs_s3 -w 10
-    -> generates goodBadBehaviorpcapng_d1_obs_features.dat and goodBadBehavior2pcapng_d1_obs_features.dat
-
-
-----------------------------------------------------------------------------------------------------------------------------
-
-1) Qualitative to quantitative data
-    -> python3 basePktSampling_Remastered.py -i Captures/client1.pcapng -c 192.168.1.1/24 -s 0.0.0.0/0 -o client1_d1.dat
-    -> python3 basePktSampling_Remastered.py -i Captures/client2.pcapng -c 192.168.1.2/24 -s 0.0.0.0/0 -o client2_d1.dat
-    -> python3 basePktSampling_Remastered.py -i Captures/client3.pcapng -c 192.168.1.3/24 -s 0.0.0.0/0 -o client3_d1.dat
-    -> python3 basePktSampling_Remastered.py -i Captures/attacker.pcapng -c 192.168.1.4/24 -s 0.0.0.0/0 -o attacker_d1.dat   que ip é que metemos aqui??
+    -> python3 basePktSampling_Remastered.py -i Captures/client1.pcapng -c 192.168.1.0/24 -s 0.0.0.0/0 -o client1_d1.dat
+    -> python3 basePktSampling_Remastered.py -i Captures/client2.pcapng -c 192.168.1.0/24 -s 0.0.0.0/0 -o client2_d1.dat
+    -> python3 basePktSampling_Remastered.py -i Captures/client3.pcapng -c 192.168.1.0/24 -s 0.0.0.0/0 -o client3_d1.dat
+    -> python3 basePktSampling_Remastered.py -i Captures/attacker.pcapng -c 192.168.1.0/24 -s 0.0.0.0/0 -o attacker_d1.dat
     -> python3 basePktSampling_Remastered.py -i Captures/goodAndBad.pcapng -c 192.168.1.0/24 -s 0.0.0.0/0 -o goodAndBad_d1.dat
 
 
 2) Sliding Window (size of 120 seconds, 20 second period for decisions)
-    -> python3 baseObsWindows_Remastered.py -i client1_d1.dat -w 120 -s 20
-    -> python3 baseObsWindows_Remastered.py -i client2_d1.dat -w 120 -s 20
-    -> python3 baseObsWindows_Remastered.py -i client3_d1.dat -w 120 -s 20
-    -> python3 baseObsWindows_Remastered.py -i attacker_d1.dat -w 120 -s 20
+    -> cd Captures && python3 ../baseObsWindows_Remastered.py -i client1_d1.dat -w 120 -s 20 && cd ..
+    -> cd Captures && python3 ../baseObsWindows_Remastered.py -i client2_d1.dat -w 120 -s 20 && cd ..
+    -> cd Captures && python3 ../baseObsWindows_Remastered.py -i client3_d1.dat -w 120 -s 20 && cd ..
+    -> cd Captures && python3 ../baseObsWindows_Remastered.py -i attacker_d1.dat -w 120 -s 20 && cd ..
     -> python3 baseObsWindows_Remastered.py -i goodAndBad_d1.dat -w 120 -s 20
     -> generates client1_d1_obs_s20, client2_d1_obs_s20, client3_d1_obs_s20, attacker_d1_obs_s20, goodAndBad_d1_obs_s20
 
 3) Extracting features
-    -> python3 baseExtractFeatures_Remastered.py -i client1_d1_obs_s20 -w 120
-    -> python3 baseExtractFeatures_Remastered.py -i client2_d1_obs_s20 -w 120
-    -> python3 baseExtractFeatures_Remastered.py -i client3_d1_obs_s20 -w 120
-    -> python3 baseExtractFeatures_Remastered.py -i attacker_d1_obs_s20 -w 120
+    -> python3 baseExtractFeatures_Remastered.py -i Captures/client1_d1_obs_s20 -w 120
+    -> python3 baseExtractFeatures_Remastered.py -i Captures/client2_d1_obs_s20 -w 120
+    -> python3 baseExtractFeatures_Remastered.py -i Captures/client3_d1_obs_s20 -w 120
+    -> python3 baseExtractFeatures_Remastered.py -i Captures/attacker_d1_obs_s20 -w 120
     -> python3 baseExtractFeatures_Remastered.py -i goodAndBad_d1_obs_s20 -w 120
     -> generates client1_d1_obs_features.dat, client2_d1_obs_features.dat, client1_d3_obs_features.dat, attacker_d1_obs_features.dat, goodAndBad_d1_obs_features.dat
 

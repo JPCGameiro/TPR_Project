@@ -21,7 +21,7 @@ def waitforEnter(fstop=False):
 ## -- 4 -- ##
 def plotFeatures(features,oClass,f1index=0,f2index=1):
     nObs,nFea=features.shape
-    colors=['b','g','r']
+    colors=['b','g','r', 'y']
     for i in range(nObs):
         plt.plot(features[i,f1index],features[i,f2index],'o'+colors[int(oClass[i])])
 
@@ -48,13 +48,12 @@ nfig=1
 
 ## -- 3 -- ##
 #Load data from text file
-features_c1=np.loadtxt("client1_d1_obs_features.dat")
-features_c2=np.loadtxt("client2_d1_obs_features.dat")
-features_c3=np.loadtxt("client3_d1_obs_features.dat")
-features_attacker=np.loadtxt("goodAndBad_d1_obs_features.dat")      #temporario so pa testar
+features_c1=np.loadtxt("Captures/client1_d1_obs_features.dat")
+features_c2=np.loadtxt("Captures/client2_d1_obs_features.dat")
+features_c3=np.loadtxt("Captures/client3_d1_obs_features.dat")
+features_attacker=np.loadtxt("Captures/attacker_d1_obs_features.dat")      #temporario so pa testar
 
 #Returning arrays with ones of the size of the features extracted
-
 oClass_c1=np.ones((len(features_c1),1))*0
 oClass_c2=np.ones((len(features_c2),1))*1
 oClass_c3=np.ones((len(features_c3),1))*2
@@ -65,11 +64,12 @@ features=np.vstack((features_c1,features_c2,features_c3,features_attacker))
 oClass=np.vstack((oClass_c1,oClass_c2,oClass_c3,oClass_attacker))
 
 #NAO CONSEGUI DESENHAR O PLOT
-# print('Train Stats Features Size:',features.shape)
+print('Train Stats Features Size:',features.shape)
+print('Classes Size: ', oClass.shape)
 
 # # ## -- 4 -- ##
-# plt.figure(4)
-# plotFeatures(features,oClass,0,1)#0,8
+plt.figure(4)
+plotFeatures(features,oClass,0,1)
 
 #ISTO AQUI É A PARTE DOS SILENCIOS
 # ## -- 5 -- ##
@@ -103,6 +103,7 @@ oClass=np.vstack((oClass_c1,oClass_c2,oClass_c3,oClass_attacker))
 # ## -- 8 -- ##
 # #:1
 
+#PCA of each feature (reduce number of features to a smaller one)
 percentage=0.5
 pC1=int(len(features_c1)*percentage)
 trainFeatures_c1=features_c1[:pC1,:]

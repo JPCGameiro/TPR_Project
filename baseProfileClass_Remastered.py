@@ -43,7 +43,7 @@ def logplotFeatures(features,oClass,f1index=0,f2index=1):
 
 ########### Main Code #############
 Classes={0:'Client1',1:'Client2',2:'Client3',3:"Attacker"}
-plt.ion()
+#plt.ion()
 nfig=1
 
 ## -- 3 -- ##
@@ -63,7 +63,6 @@ oClass_attacker=np.ones((len(features_attacker),1))*3
 features=np.vstack((features_c1,features_c2,features_c3,features_attacker))
 oClass=np.vstack((oClass_c1,oClass_c2,oClass_c3,oClass_attacker))
 
-#NAO CONSEGUI DESENHAR O PLOT
 print('Train Stats Features Size:',features.shape)
 print('Classes Size: ', oClass.shape)
 
@@ -103,7 +102,7 @@ plotFeatures(features,oClass,0,1)
 # ## -- 8 -- ##
 # #:1
 
-#PCA of each feature (reduce number of features to a smaller one)
+#TrainFeatures with clients behavior only
 percentage=0.5
 pC1=int(len(features_c1)*percentage)
 trainFeatures_c1=features_c1[:pC1,:]
@@ -111,30 +110,33 @@ pC2=int(len(features_c2)*percentage)
 trainFeatures_c2=features_c2[:pC2,:]
 pC3=int(len(features_c3)*percentage)
 trainFeatures_c3=features_c3[:pC3,:]
-
 trainFeatures=np.vstack((trainFeatures_c1,trainFeatures_c2,trainFeatures_c3))
 
+#Silence features
 # trainFeatures_c1S=features_c1S[:pC1,:]
 # trainFeatures_c2S=features_c2S[:pC2,:]
 # trainFeatures_c3S=features_c3S[:pC3,:]
-
 # trainFeaturesS=np.vstack((trainFeatures_c1S,trainFeatures_c2S,trainFeatures_c3S))
 
+#Wavelet features
 # trainFeatures_c1W=features_c1W[:pC1,:]
 # trainFeatures_c2W=features_c2W[:pC2,:]
 # trainFeatures_c3W=features_c3W[:pC3,:]
-
 # trainFeaturesW=np.vstack((trainFeatures_c1W,trainFeatures_c2W,trainFeatures_c3W))
 
-o2trainClass=np.vstack((oClass_c1[:pC1],oClass_c2[:pC2],oClass_c3[:pC3]))
+#Training fetaures of while wavelet, silence and normal ones
 #i2trainFeatures=np.hstack((trainFeatures,trainFeaturesS,trainFeaturesW))
+#Training features with normal ones and silence
 #i2trainFeatures=np.hstack((trainFeatures,trainFeaturesS))
+
+o2trainClass=np.vstack((oClass_c1[:pC1],oClass_c2[:pC2],oClass_c3[:pC3]))
 i2trainFeatures=trainFeatures
 
 
 # ## -- 9 -- ##
-from sklearn.preprocessing import MaxAbsScaler
 
+from sklearn.preprocessing import MaxAbsScaler
+#Feature Normalization
 i2trainScaler = MaxAbsScaler().fit(i2trainFeatures)
 i2trainFeaturesN=i2trainScaler.transform(i2trainFeatures)
 
@@ -144,7 +146,9 @@ i2trainFeaturesN=i2trainScaler.transform(i2trainFeatures)
 # i3AtestFeaturesN=i2trainScaler.transform(i3testFeatures)          #sera q temos de fzr este? pq anomalias
 # i3CtestFeaturesN=i3trainScaler.transform(i3testFeatures)
 
+print("Mean of Train Features")
 print(np.mean(i2trainFeaturesN,axis=0))
+print("Standard deviation of Train Features")
 print(np.std(i2trainFeaturesN,axis=0))
 
 # ## -- 10 -- ##

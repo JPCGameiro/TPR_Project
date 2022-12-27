@@ -63,7 +63,7 @@ print('Classes Size: ', oClass.shape)
 
 #############----Feature Training----#############
 #:1
-#TrainFeatures with clients behavior only
+#TrainFeatures with first 50% of clients behavior only
 percentage=0.5
 pC1=int(len(features_c1)*percentage)
 trainFeatures_c1=features_c1[:pC1,:]
@@ -71,36 +71,30 @@ pC2=int(len(features_c2)*percentage)
 trainFeatures_c2=features_c2[:pC2,:]
 pC3=int(len(features_c3)*percentage)
 trainFeatures_c3=features_c3[:pC3,:]
-# pCAt=int(len(features_attacker)*percentage)
-# trainFeatures_at=features_attacker[:pCAt,:]
 
-#Build features of normal behavior
+
+#1 Build train features of normal behavior
+#   o2trainClass -> first 50% of good behavior only
 trainFeatures=np.vstack((trainFeatures_c1,trainFeatures_c2,trainFeatures_c3))
 o2trainClass=np.vstack((oClass_c1[:pC1],oClass_c2[:pC2],oClass_c3[:pC3]))
 i2trainFeatures=trainFeatures
 
 
-#Isto n se faz
-#Build features of normal and attacker behavior
-# trainFeatures=np.vstack((trainFeatures_c1,trainFeatures_c2,trainFeatures_c3, trainFeatures_at))
-# o3trainClass=np.vstack((oClass_c1[:pC1],oClass_c2[:pC2],oClass_c3[:pC3], oClass_attacker[:pCAt]))
-# i3trainFeatures=trainFeatures
-
-#2
+#2 Build train features of normal + bad behavior
+#   o3trainClass -> first 50% of good and bad behavior
 pAt=int(len(features_attacker)*percentage)
 trainFeatures_at=features_attacker[:pAt,:]
-
 trainFeatures=np.vstack((trainFeatures_c1,trainFeatures_c2,trainFeatures_c3,trainFeatures_at))
-
 o3trainClass=np.vstack((oClass_c1[:pC1],oClass_c2[:pC2],oClass_c3[:pC3],oClass_attacker[:pAt]))
 i3trainFeatures=trainFeatures
-#:3
 
+
+#:3 Build test features of normal + bad behavior
+#   o3testClass -> second 50% of good and bad behavior
 testFeatures_c1=features_c1[pC1:,:]
 testFeatures_c2=features_c1[pC1:,:]
 testFeatures_c3=features_c1[pC1:,:]
 testFeatures_at=features_attacker[pAt:,:]
-
 testFeatures=np.vstack((testFeatures_c1, testFeatures_c2, testFeatures_c3, testFeatures_at))
 
 o3testClass=np.vstack((oClass_c1[pC1:],oClass_c2[pC2:],oClass_c3[pC3:],oClass_attacker[pAt:]))
@@ -108,61 +102,85 @@ o3testClass=np.vstack((oClass_c1[pC1:],oClass_c2[pC2:],oClass_c3[pC3:],oClass_at
 #i3testFeatures=np.hstack((testFeatures,testFeaturesS))
 i3testFeatures=testFeatures
 
+
+
+
+
+
 #############----Feature Normalization----#############
 from sklearn.preprocessing import MaxAbsScaler
 
-#Fit and Transform to normalize data
+#Normalize i2 train class
 i2trainScaler = MaxAbsScaler().fit(i2trainFeatures)
 i2trainFeaturesN=i2trainScaler.transform(i2trainFeatures)
 
+#Normalize i3 train class
 i3trainScaler = MaxAbsScaler().fit(i3trainFeatures)  
 i3trainFeaturesN=i3trainScaler.transform(i3trainFeatures)
 
+##Normalize i3 test class with i2 and i3 train Scalers
 i3AtestFeaturesN=i2trainScaler.transform(i3testFeatures)
-# i3CtestFeaturesN=i3trainScaler.transform(i3testFeatures)    #acho q este n é pra nos pq classificaçao
+i3CtestFeaturesN=i3trainScaler.transform(i3testFeatures)
 
-print("Mean of TrainFeatures")
+
+'''
+print("Mean of i2 TrainFeatures")
 print(np.mean(i2trainFeaturesN,axis=0))
-print("Standard deviation of TrainFeatures")
+print("Standard deviation of i2 TrainFeatures")
 print(np.std(i2trainFeaturesN,axis=0))
 
+print("Mean of i3 TrainFeatures")
+print(np.mean(i3trainFeaturesN,axis=0))
+print("Standard deviation of i3 TrainFeatures")
+print(np.std(i3trainFeaturesN,axis=0))
 
-# print("Mean of TrainFeatures")
-# print(np.mean(i3trainFeaturesN,axis=0))
-# print("Standard deviation of TrainFeatures")
-# print(np.std(i3trainFeaturesN,axis=0))
+print("Mean of i2 scaled TestFeatures")
+print(np.mean(i3AtestFeaturesN,axis=0))
+print("Standard deviation of i2 scaled  TestFeatures")
+print(np.std(i3AtestFeaturesN,axis=0))
 
-
+print("Mean of i3 scaled TestFeatures")
+print(np.mean(i3CtestFeaturesN,axis=0))
+print("Standard deviation of i3 scaled  TestFeatures")
+print(np.std(i3CtestFeaturesN,axis=0))
+'''
 
 
 
 #############----Principal Components Analysis----#############
 from sklearn.decomposition import PCA
 
-pca2 = PCA(n_components=4, svd_solver='full')
-#Add to the model training data
+pca2 = PCA(n_components=3, svd_solver='full')
+#Add to the PCA train model the i2 training data
 i2trainPCA=pca2.fit(i2trainFeaturesN)
 i2trainFeaturesNPCA = i2trainPCA.transform(i2trainFeaturesN)
 
 # pca3 = PCA(n_components=4, svd_solver='full')
-#Add to the model training data
+#Add to the PCA train model the i3 training data
 i3trainPCA=pca2.fit(i3trainFeaturesN)
 i3trainFeaturesNPCA = i3trainPCA.transform(i3trainFeaturesN)
 
+#Obtain test features from i2 PCA training
 i3AtestFeaturesNPCA = i2trainPCA.transform(i3AtestFeaturesN)
 
-#Plot PCA features
-# print(i2trainFeaturesNPCA.shape,o2trainClass.shape)
-# plt.figure(8)
-# plotFeatures(i2trainFeaturesNPCA,o2trainClass,0,1)
 
-#Plot PCA features
-# print(i3trainFeaturesNPCA.shape,o3trainClass.shape)
-# plt.figure(8)
-# plotFeatures(i3trainFeaturesNPCA,o3trainClass,0,1)
+#Plot train PCA features
+print(i2trainFeaturesNPCA.shape,o2trainClass.shape)
+plt.figure(8)
+plotFeatures(i2trainFeaturesNPCA,o2trainClass,0,1)
+
+#Plot train PCA features
+print(i3trainFeaturesNPCA.shape,o3trainClass.shape)
+plt.figure(8)
+plotFeatures(i3trainFeaturesNPCA,o3trainClass,0,1)
+
+#Plot test PCA fratures
+print(i3AtestFeaturesNPCA.shape,o3testClass.shape)
+plt.figure(8)
+plotFeatures(i3AtestFeaturesNPCA,o3testClass,0,1)
 
 
-
+exit(0)
 
 
 #############----Anomaly Detection based on centroids distances----#############

@@ -20,9 +20,11 @@ def waitforEnter(fstop=False):
 
 def plotFeatures(features,oClass,f1index=0,f2index=1):
     nObs,nFea=features.shape
+    cObs,cFea=oClass.shape
     colors=['b','g','r', 'y']
     for i in range(nObs):
-        plt.plot(features[i,f1index],features[i,f2index],'o'+colors[int(oClass[i])])
+        if i < cObs: 
+            plt.plot(features[i,f1index],features[i,f2index],'o'+colors[int(oClass[i])])
 
     plt.show()
     waitforEnter()

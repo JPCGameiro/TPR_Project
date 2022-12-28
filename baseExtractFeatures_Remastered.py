@@ -70,11 +70,11 @@ def extractFeatures(dirname,basename,nObs,allwidths):
             print(obsfilename)
             subdata=np.loadtxt(obsfilename)[:,1:]    #Loads data and removes first column (sample index)
                 
-            faux=extractStats(subdata)    
-            features=np.hstack((features,faux))
+            #faux=extractStats(subdata)    
+            #features=np.hstack((features,faux))
             
-            #faux2=extractStatsSilenceActivity(subdata)
-            #features=np.hstack((features,faux2))
+            faux2=extractStatsSilenceActivity(subdata)
+            features=np.hstack((features,faux2))
         if o==0:
             obsFeatures=features
         else:

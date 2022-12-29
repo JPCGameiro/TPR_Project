@@ -121,21 +121,21 @@ from sklearn.preprocessing import MaxAbsScaler
 
 #Without silences
 #Normalize the train class
-trainScaler = MaxAbsScaler().fit(trainFeaturesClient)
-trainFeaturesN=trainScaler.transform(trainFeaturesClient)
-
-##Normalize test classes with the train Scalers
-AtestFeaturesNA=trainScaler.transform(testFeaturesAttacker)
-AtestFeaturesNC=trainScaler.transform(testFeaturesClient)
-
-# #With silences
-# #Normalize the train class
-# trainScaler = MaxAbsScaler().fit(allTrainFeaturesClient)
-# trainFeaturesN=trainScaler.transform(allTrainFeaturesClient)
+# trainScaler = MaxAbsScaler().fit(trainFeaturesClient)
+# trainFeaturesN=trainScaler.transform(trainFeaturesClient)
 
 # ##Normalize test classes with the train Scalers
-# AtestFeaturesNA=trainScaler.transform(allTestFeaturesAttacker)
-# AtestFeaturesNC=trainScaler.transform(allTestFeaturesClient)
+# AtestFeaturesNA=trainScaler.transform(testFeaturesAttacker)
+# AtestFeaturesNC=trainScaler.transform(testFeaturesClient)
+
+#With silences
+#Normalize the train class
+trainScaler = MaxAbsScaler().fit(allTrainFeaturesClient)
+trainFeaturesN=trainScaler.transform(allTrainFeaturesClient)
+
+##Normalize test classes with the train Scalers
+AtestFeaturesNA=trainScaler.transform(allTestFeaturesAttacker)
+AtestFeaturesNC=trainScaler.transform(allTestFeaturesClient)
 
 
 # print("Mean of TrainFeatures")

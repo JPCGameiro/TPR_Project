@@ -48,7 +48,7 @@ def printStats(tp, tn, fp, fn):
 
 
 ########### Main Code #############
-Classes={0:'Client1',1:'Client2',2:'Client3',3:"Attacker"}
+Classes={0:'Client',1:"Attacker"}
 #plt.ion()
 nfig=1
 
@@ -58,67 +58,98 @@ features_c1=np.loadtxt("Captures/client1_d1_obs_features.dat")
 features_c2=np.loadtxt("Captures/client2_d1_obs_features.dat")
 features_c3=np.loadtxt("Captures/client3_d1_obs_features.dat")
 features_attacker=np.loadtxt("Captures/attacker_d1_obs_features.dat")
+
 #Returning arrays with ones of the size of the features extracted
-oClass_c1=np.ones((len(features_c1),1))*0
-oClass_c2=np.ones((len(features_c2),1))*1
-oClass_c3=np.ones((len(features_c3),1))*2
-oClass_attacker=np.ones((len(features_attacker),1))*3
+oClass_client1=np.ones((len(features_c1),1))*0
+oClass_client2=np.ones((len(features_c2),1))*0
+oClass_client3=np.ones((len(features_c3),1))*0
+oClass_attacker=np.ones((len(features_attacker),1))*1
 
 #Stack arrays of features and classes vertically
-features=np.vstack((features_c1,features_c2,features_c3,features_attacker))
-oClass=np.vstack((oClass_c1,oClass_c2,oClass_c3,oClass_attacker))
+features=np.vstack((features_c1,features_c2,features_c3))
+oClass=np.vstack((oClass_client1, oClass_client2, oClass_client3))
 print('Train Stats Features Size:',features.shape)
 print('Classes Size: ', oClass.shape)
 
 #Plot features
-# plt.figure(4)
-# plotFeatures(features,oClass,2,3) #0,27
+#plt.figure(4)
+#plotFeatures(features,oClass,2,3) #0,27
 
+########### Silence Features #############
 
+features_c1S=np.loadtxt("Captures/client1_d1_obs_Sfeatures.dat")
+features_c2S=np.loadtxt("Captures/client2_d1_obs_Sfeatures.dat")
+features_c3S=np.loadtxt("Captures/client3_d1_obs_Sfeatures.dat")
+features_attackerS=np.loadtxt("Captures/attacker_d1_obs_Sfeatures.dat")
 
+featuresS=np.vstack((features_c1S,features_c2S,features_attackerS))
+oClass=np.vstack((oClass_client1, oClass_client2, oClass_client3))
+print('Train Silence Features Size:',featuresS.shape)
+print('Classes Size: ', oClass.shape)
+
+# plt.figure(5)
+# plotFeatures(featuresS,oClass,0,2) #0,23
 
 #############----Feature Training----#############
-#:1
-#TrainFeatures with first 50% of clients behavior only
 percentage=0.5
 pC1=int(len(features_c1)*percentage)
-trainFeatures_c1=features_c1[:pC1,:]
+trainFeaturesC1=features_c1[:pC1,:]
 pC2=int(len(features_c2)*percentage)
-trainFeatures_c2=features_c2[:pC2,:]
+trainFeaturesC2=features_c2[:pC2,:]
 pC3=int(len(features_c3)*percentage)
-trainFeatures_c3=features_c3[:pC3,:]
+trainFeaturesC3=features_c3[:pC3,:]
+
+pC1S=int(len(features_c1S)*percentage)
+trainFeaturesC1S=features_c1S[:pC1S,:]
+pC2S=int(len(features_c2S)*percentage)
+trainFeaturesC2S=features_c2S[:pC2S,:]
+pC3S=int(len(features_c3S)*percentage)
+trainFeaturesC3S=features_c3S[:pC3S,:]
 
 
+#:1
 #1 Build train features of normal behavior
-#   o2trainClass -> first 50% of good behavior only
-trainFeatures=np.vstack((trainFeatures_c1,trainFeatures_c2,trainFeatures_c3))
-o2trainClass=np.vstack((oClass_c1[:pC1],oClass_c2[:pC2],oClass_c3[:pC3]))
-i2trainFeatures=trainFeatures
+#   trainClassClient -> good behavior only
+trainFeaturesClient=np.vstack((trainFeaturesC1, trainFeaturesC2, trainFeaturesC3))
+trainFeaturesClientS=np.vstack((trainFeaturesC1S, trainFeaturesC2S, trainFeaturesC3S))
+allTrainFeaturesClient=np.hstack((trainFeaturesClient,trainFeaturesClientS))
+#trainClassClient=oClass_client
+trainClassClient=np.vstack((oClass_client1[:pC1],oClass_client2[:pC2],oClass_client3[:pC3]))
 
 
-#2 Build train features of normal + bad behavior
-#   o3trainClass -> first 50% of good and bad behavior
-pAt=int(len(features_attacker)*percentage)
-trainFeatures_at=features_attacker[:pAt,:]
-trainFeatures=np.vstack((trainFeatures_c1,trainFeatures_c2,trainFeatures_c3,trainFeatures_at))
-o3trainClass=np.vstack((oClass_c1[:pC1],oClass_c2[:pC2],oClass_c3[:pC3],oClass_attacker[:pAt]))
-i3trainFeatures=trainFeatures
+
+#2 Build test features with attacker behavior
+#   testClassAttacker -> bad behavior for anomaly detection
+testFeaturesAttacker=features_attacker
+testFeaturesAttackerS=features_attackerS
+allTestFeaturesAttacker=np.hstack((testFeaturesAttacker,testFeaturesAttackerS))
+testClassAttacker=oClass_attacker
 
 
-#:3 Build test features of normal + bad behavior
-#   o3testClass -> second 50% of good and bad behavior
-testFeatures_c1=features_c1[pC1:,:]
-testFeatures_c2=features_c1[pC1:,:]
-testFeatures_c3=features_c1[pC1:,:]
-testFeatures_at=features_attacker[pAt:,:]
-testFeatures=np.vstack((testFeatures_c1, testFeatures_c2, testFeatures_c3, testFeatures_at))
-
-o3testClass=np.vstack((oClass_c1[pC1:],oClass_c2[pC2:],oClass_c3[pC3:],oClass_attacker[pAt:]))
-#i3testFeatures=np.hstack((testFeatures,testFeaturesS,testFeaturesW))
-#i3testFeatures=np.hstack((testFeatures,testFeaturesS))
-i3testFeatures=testFeatures
 
 
+
+pC1=int(len(features_c1)*percentage)
+trainFeaturesC1=features_c1[pC1:,:]
+pC2=int(len(features_c2)*percentage)
+trainFeaturesC2=features_c2[pC2:,:]
+pC3=int(len(features_c3)*percentage)
+trainFeaturesC3=features_c3[pC3:,:]
+
+pC1S=int(len(features_c1S)*percentage)
+trainFeaturesC1S=features_c1S[pC1S:,:]
+pC2S=int(len(features_c2S)*percentage)
+trainFeaturesC2S=features_c2S[pC2S:,:]
+pC3S=int(len(features_c3S)*percentage)
+trainFeaturesC3S=features_c3S[pC3S:,:]
+
+#3 Build test features with a clients good behavior
+#   testClassClient -> good behavior for anomaly detection
+testFeaturesClient=np.vstack((trainFeaturesC1, trainFeaturesC2, trainFeaturesC3))
+testFeaturesClientS=np.vstack((trainFeaturesC1S, trainFeaturesC2S, trainFeaturesC3S))
+allTestFeaturesClient=np.hstack((testFeaturesClient,testFeaturesClientS))
+#testClassClient=oClass_client_test
+testClassClient=np.vstack((oClass_client1[pC1:],oClass_client2[pC2:],oClass_client3[pC3:]))
 
 
 
@@ -126,39 +157,37 @@ i3testFeatures=testFeatures
 #############----Feature Normalization----#############
 from sklearn.preprocessing import MaxAbsScaler
 
-#Normalize i2 train class
-i2trainScaler = MaxAbsScaler().fit(i2trainFeatures)
-i2trainFeaturesN=i2trainScaler.transform(i2trainFeatures)
+#Without silences
+#Normalize the train class
+# trainScaler = MaxAbsScaler().fit(trainFeaturesClient)
+# trainFeaturesN=trainScaler.transform(trainFeaturesClient)
 
-#Normalize i3 train class
-i3trainScaler = MaxAbsScaler().fit(i3trainFeatures)  
-i3trainFeaturesN=i3trainScaler.transform(i3trainFeatures)
-
-##Normalize i3 test class with i2 and i3 train Scalers
-i3AtestFeaturesN=i2trainScaler.transform(i3testFeatures)
-i3CtestFeaturesN=i3trainScaler.transform(i3testFeatures)
+# ##Normalize test classes with the train Scalers
+# AtestFeaturesNA=trainScaler.transform(testFeaturesAttacker)
+# AtestFeaturesNC=trainScaler.transform(testFeaturesClient)
 
 
+#With silences
+#Normalize the train class
+trainScaler = MaxAbsScaler().fit(allTrainFeaturesClient)
+trainFeaturesN=trainScaler.transform(allTrainFeaturesClient)
 
-# print("Mean of i2 TrainFeatures")
-# print(np.mean(i2trainFeaturesN,axis=0))
-# print("Standard deviation of i2 TrainFeatures")
-# print(np.std(i2trainFeaturesN,axis=0))
+##Normalize test classes with the train Scalers
+AtestFeaturesNA=trainScaler.transform(allTestFeaturesAttacker)
+AtestFeaturesNC=trainScaler.transform(allTestFeaturesClient)
 
-# print("Mean of i3 TrainFeatures")
-# print(np.mean(i3trainFeaturesN,axis=0))
-# print("Standard deviation of i3 TrainFeatures")
-# print(np.std(i3trainFeaturesN,axis=0))
 
-# print("Mean of i2 scaled TestFeatures")
-# print(np.mean(i3AtestFeaturesN,axis=0))
-# print("Standard deviation of i2 scaled  TestFeatures")
-# print(np.std(i3AtestFeaturesN,axis=0))
 
-# print("Mean of i3 scaled TestFeatures")
-# print(np.mean(i3CtestFeaturesN,axis=0))
-# print("Standard deviation of i3 scaled  TestFeatures")
-# print(np.std(i3CtestFeaturesN,axis=0))
+# print("Mean of TrainFeatures")
+# print(np.mean(trainFeaturesN,axis=0))
+# print("Standard deviation of TrainFeatures")
+# print(np.std(trainFeaturesN,axis=0))
+
+# print("Mean of TestFeatures")
+# print(np.mean(AtestFeaturesNA,axis=0))
+# print("Standard deviation of TestFeatures")
+# print(np.std(AtestFeaturesNA,axis=0))
+
 
 
 
@@ -166,124 +195,134 @@ i3CtestFeaturesN=i3trainScaler.transform(i3testFeatures)
 #############----Principal Components Analysis----#############
 from sklearn.decomposition import PCA
 
-pca2 = PCA(n_components=3, svd_solver='full')
-#Add to the PCA train model the i2 training data
-i2trainPCA=pca2.fit(i2trainFeaturesN)
-i2trainFeaturesNPCA = i2trainPCA.transform(i2trainFeaturesN)
+#without silences - pca 11 --> max range 13
+#with silences - pca 18 --> max range 18
+pca = PCA(n_components=11, svd_solver='full')
 
-# pca3 = PCA(n_components=4, svd_solver='full')
-#Add to the PCA train model the i3 training data
-i3trainPCA=pca2.fit(i3trainFeaturesN)
-i3trainFeaturesNPCA = i3trainPCA.transform(i3trainFeaturesN)
+#reduce train features data with PCA
+trainPCA=pca.fit(trainFeaturesN)
+trainFeaturesNPCA = trainPCA.transform(trainFeaturesN)
 
-#Obtain test features from i2 PCA training
-i3AtestFeaturesNPCA = i2trainPCA.transform(i3AtestFeaturesN)
+#Obtain test features from PCA training
+AtestFeaturesNPCA = trainPCA.transform(AtestFeaturesNA)
+CtestFeaturesNPCA = trainPCA.transform(AtestFeaturesNC)
 
-
-#Plot train PCA features
-# print(i2trainFeaturesNPCA.shape,o2trainClass.shape)
-# plt.figure(8)
-# plotFeatures(i2trainFeaturesNPCA,o2trainClass,0,1)
 
 # #Plot train PCA features
-# print(i3trainFeaturesNPCA.shape,o3trainClass.shape)
+# print(trainFeaturesNPCA.shape,trainClassClient.shape)
 # plt.figure(8)
-# plotFeatures(i3trainFeaturesNPCA,o3trainClass,0,1)
+# plotFeatures(trainFeaturesNPCA,trainClassClient,0,1)
 
 # #Plot test PCA fratures
-# print(i3AtestFeaturesNPCA.shape,o3testClass.shape)
+# print(AtestFeaturesNPCA.shape,testClassAttacker.shape)
 # plt.figure(8)
-# plotFeatures(i3AtestFeaturesNPCA,o3testClass,0,1)
+# plotFeatures(AtestFeaturesNPCA,testClassAttacker,0,1)
+
+# #Plot test PCA fratures
+# print(CtestFeaturesNPCA.shape,testClassClient.shape)
+# plt.figure(8)
+# plotFeatures(CtestFeaturesNPCA,testClassClient,0,1)
 
 
 
 
-
+print(trainFeaturesN.shape)
+print(trainClassClient.shape)
 #############----Anomaly Detection based on centroids distances----#############
-# from sklearn.preprocessing import MaxAbsScaler
-# #11
-# centroids={}
-# for c in range(3):  # Only the first three classes
-#     pClass=(o2trainClass==c).flatten()
-#     centroids.update({c:np.mean(i2trainFeaturesN[pClass,:],axis=0)})
-# print('All Features Centroids:\n',centroids)
+from sklearn.preprocessing import MaxAbsScaler
+#11
+centroids={}
+pClass=(trainClassClient==0).flatten() #Client Class = 0
+centroids.update({0:np.mean(trainFeaturesN[pClass,:],axis=0)})
+print('All Features Centroids:\n',centroids)
 
-# tp = 0 #True Positive
-# tn = 0 #True Negative
-# fp = 0 #False Positive
-# fn = 0 #False Negative
+tp = 0 #True Positive
+tn = 0 #True Negative
+fp = 0 #False Positive
+fn = 0 #False Negative
 
-# AnomalyThreshold=1.2
-# print('\n-- Anomaly Detection based on Centroids Distances --')
-# nObsTest,nFea=i3AtestFeaturesN.shape
-# nObsClass,nFea=o3testClass.shape
-# for i in range(nObsTest):
-#     if i < nObsClass:
-#         x=i3AtestFeaturesN[i]
-#         dists=[distance(x,centroids[0]),distance(x,centroids[1]),distance(x,centroids[2])]
-#         if min(dists)>AnomalyThreshold:
-#             result="Anomaly"
-#             #False Positive
-#             if o3testClass[i][0] != 3:
-#                 fp += 1
-#             #True Positive
-#             else:
-#                 tp += 1
-#         else:
-#             result="OK"
-#             #True Negative
-#             if o3testClass[i][0] != 3:
-#                 tn += 1
-#             #False Negative
-#             else:
-#                 fn += 1
-#         print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f},{:.4f},{:.4f}] -> Result -> {}'.format(i,Classes[o3testClass[i][0]],*dists,result))
+AnomalyThreshold=1.2
+print('\n-- Anomaly Detection based on Centroids Distances --')
+nObsTest,nFea=AtestFeaturesNA.shape
+for i in range(nObsTest):
+    x=AtestFeaturesNA[i]
+    dists=[distance(x,centroids[0])]
+    if min(dists)>AnomalyThreshold:
+        result="Anomaly"
+        #True Positive
+        tp += 1
+    else:
+        result="OK"
+        #False Negative
+        fn += 1
+    # print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f}] -> Result -> {}'.format(i,Classes[testClassAttacker[i][0]],*dists,result))
 
-# printStats(tp, tn, fp, fn)
+nObsTest,nFea=AtestFeaturesNC.shape
+for i in range(nObsTest):
+    x=AtestFeaturesNC[i]
+    dists=[distance(x,centroids[0])]
+    if min(dists)>AnomalyThreshold:
+        result="Anomaly"
+        #False Positive
+        fp += 1
+    else:
+        result="OK"
+        #True Negative
+        tn += 1
+    # print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f}] -> Result -> {}'.format(i,Classes[testClassClient[i][0]],*dists,result))
+
+printStats(tp, tn, fp, fn)
 
 
 
 
+
+
+#############----Anomaly Detection based on centroids distances (PCA Features)----#############
+from sklearn.preprocessing import MaxAbsScaler
 #12
-# centroids={}
-# for c in range(3):  # Only the first two classes
-#     pClass=(o2trainClass==c).flatten()
-#     centroids.update({c:np.mean(i2trainFeaturesNPCA[pClass,:],axis=0)})
-# print('All Features Centroids:\n',centroids)
+centroids={}
+pClass=(trainClassClient==0).flatten() #Client Class = 0
+centroids.update({0:np.mean(trainFeaturesNPCA[pClass,:],axis=0)})
+#print('All Features Centroids:\n',centroids)
 
-# tp = 0 #True Positive
-# tn = 0 #True Negative
-# fp = 0 #False Positive
-# fn = 0 #False Negative
-# AnomalyThreshold=1.2
-# print('\n-- Anomaly Detection based on Centroids Distances (PCA Features) --')
-# nObsTest,nFea=i3AtestFeaturesNPCA.shape
-# nObsClass,nFea=o3testClass.shape
-# for i in range(nObsTest):
-#     if i < nObsClass:
-#         x=i3AtestFeaturesNPCA[i]
-#         dists=[distance(x,centroids[0]),distance(x,centroids[1])]
-#         if min(dists)>AnomalyThreshold:
-#             result="Anomaly"
-#             #False Positive
-#             if o3testClass[i][0] != 3:
-#                 fp += 1
-#             #True Positive
-#             else:
-#                 tp += 1
-#         else:
-#             result="OK"
-#             #True Negative
-#             if o3testClass[i][0] != 3:
-#                 tn += 1
-#             #False Negative
-#             else:
-#                 fn += 1
-        
-#         print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f},{:.4f}] -> Result -> {}'.format(i,Classes[o3testClass[i][0]],*dists,result))
+tp = 0 #True Positive
+tn = 0 #True Negative
+fp = 0 #False Positive
+fn = 0 #False Negative
 
-# #Print statistics   
-# printStats(tp, tn, fp, fn)
+AnomalyThreshold=1.2
+print('\n-- Anomaly Detection based on Centroids Distances (PCA Features)--')
+nObsTest,nFea=AtestFeaturesNPCA.shape
+for i in range(nObsTest):
+    x=AtestFeaturesNPCA[i]
+    dists=[distance(x,centroids[0])]
+    if min(dists)>AnomalyThreshold:
+        result="Anomaly"
+        #True Positive
+        tp += 1
+    else:
+        result="OK"
+        #False Negative
+        fn += 1
+    #print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f}] -> Result -> {}'.format(i,Classes[testClassAttacker[i][0]],*dists,result))
+
+nObsTest,nFea=CtestFeaturesNPCA.shape
+for i in range(nObsTest):
+    x=CtestFeaturesNPCA[i]
+    dists=[distance(x,centroids[0])]
+    if min(dists)>AnomalyThreshold:
+        result="Anomaly"
+        #False Positive
+        fp += 1
+    else:
+        result="OK"
+        #True Negative
+        tn += 1
+    #print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f}] -> Result -> {}'.format(i,Classes[testClassClient[i][0]],*dists,result))
+
+printStats(tp, tn, fp, fn)
+
 
 
 
@@ -292,54 +331,56 @@ i3AtestFeaturesNPCA = i2trainPCA.transform(i3AtestFeaturesN)
 
 #############----Anomaly Detection based Multivariate---#############
 #13 ---- Este aqui é o que parece dar melhor
-# from scipy.stats import multivariate_normal
-# print('\n-- Anomaly Detection based Multivariate PDF (PCA Features) --')
-# means={}
-# for c in range(2):
-#     pClass=(o2trainClass==c).flatten()
-#     means.update({c:np.mean(i2trainFeaturesNPCA[pClass,:],axis=0)})
-# #print(means)
+from scipy.stats import multivariate_normal
+print('\n-- Anomaly Detection based Multivariate PDF (PCA Features) --')
+means={}
+pClass=(trainClassClient==0).flatten() #Client Class = 0
+means.update({0:np.mean(trainFeaturesNPCA[pClass,:],axis=0)})
+#print(means)
 
-# covs={}
-# for c in range(2):
-#     pClass=(o2trainClass==c).flatten()
-#     covs.update({c:np.cov(i2trainFeaturesNPCA[pClass,:],rowvar=0)})
-# #print(covs)
+covs={}
+pClass=(trainClassClient==0).flatten() #Client Class = 0
+covs.update({0:np.cov(trainFeaturesNPCA[pClass,:],rowvar=0)})
+#print(covs)
 
 
-# tp = 0 #True Positive
-# tn = 0 #True Negative
-# fp = 0 #False Positive
-# fn = 0 #False Negative
+tp = 0 #True Positive
+tn = 0 #True Negative
+fp = 0 #False Positive
+fn = 0 #False Negative
 
-# AnomalyThreshold=0.05
-# nObsTest,nFea=i3AtestFeaturesNPCA.shape
-# nObsClass,nFea=o3testClass.shape
-# for i in range(nObsTest):
-#     if i < nObsClass:
-#         x=i3AtestFeaturesNPCA[i,:]
-#         probs=np.array([multivariate_normal.pdf(x,means[0],covs[0]),multivariate_normal.pdf(x,means[1],covs[1])])
-#         if max(probs)<AnomalyThreshold:
-#             result="Anomaly"
-#             #False Positive
-#             if o3testClass[i][0] != 3:
-#                 fp += 1
-#             #True Positive
-#             else:
-#                 tp += 1
-#         else:
-#             result="OK"
-#             #True Negative
-#             if o3testClass[i][0] != 3:
-#                 tn += 1
-#             #False Negative
-#             else:
-#                 fn += 1
-        
-#         print('Obs: {:2} ({}): Probabilities: [{:.4e},{:.4e}] -> Result -> {}'.format(i,Classes[o3testClass[i][0]],*probs,result))
+AnomalyThreshold=1.2
+nObsTest,nFea=AtestFeaturesNPCA.shape
+for i in range(nObsTest):
+    x=AtestFeaturesNPCA[i,:]
+    probs=np.array([multivariate_normal.pdf(x,means[0],covs[0])])
+    if max(probs)<AnomalyThreshold:
+        result="Anomaly"
+        #True Positive
+        tp += 1
+    else:
+        result="OK"
+        #False Negative
+        fn += 1
+    
+    # print('Obs: {:2} ({}): Probabilities: [{:.4e}] -> Result -> {}'.format(i,Classes[testClassAttacker[i][0]],*probs,result))
 
-# #Print statistics   
-# printStats(tp, tn, fp, fn)
+nObsTest,nFea=CtestFeaturesNPCA.shape
+for i in range(nObsTest):
+    x=CtestFeaturesNPCA[i,:]
+    probs=np.array([multivariate_normal.pdf(x,means[0],covs[0])])
+    if max(probs)<AnomalyThreshold:
+        result="Anomaly"
+        #False Positive
+        fp += 1
+    else:
+        result="OK"
+        #True Negative
+        tn += 1
+    
+    # print('Obs: {:2} ({}): Probabilities: [{:.4e}] -> Result -> {}'.format(i,Classes[testClassClient[i][0]],*probs,result))
+#Print statistics   
+printStats(tp, tn, fp, fn)
 
 
 
@@ -349,134 +390,149 @@ i3AtestFeaturesNPCA = i2trainPCA.transform(i3AtestFeaturesN)
 
 #############----Anomaly Detection based on One Class Support Vector Machines (PCA Features)---#############
 #14
-# from sklearn import svm
-
-# print('\n-- Anomaly Detection based on One Class Support Vector Machines (PCA Features) --')
-# ocsvm = svm.OneClassSVM(gamma='scale',kernel='linear').fit(i2trainFeaturesNPCA)  
-# rbf_ocsvm = svm.OneClassSVM(gamma='scale',kernel='rbf').fit(i2trainFeaturesNPCA)  
-# poly_ocsvm = svm. OneClassSVM(gamma='scale',kernel='poly',degree=2).fit(i2trainFeaturesNPCA)  
-
-# L1=ocsvm.predict(i3AtestFeaturesNPCA)
-# L2=rbf_ocsvm.predict(i3AtestFeaturesNPCA)
-# L3=poly_ocsvm.predict(i3AtestFeaturesNPCA)
-
-# AnomResults={-1:"Anomaly",1:"OK"}
-
-# tpL, tnL, fpL, fnL = 0, 0, 0, 0
-# tpRBF, tnRBF, fpRBF, fnRBF = 0, 0, 0, 0
-# tpP, tnP, fpP, fnP = 0, 0, 0, 0
-
-# nObsTest,nFea=i3AtestFeaturesNPCA.shape
-# nObsClass,nFea=o3testClass.shape
-# for i in range(nObsTest):
-#     if i < nObsClass:
-#         print('Obs: {:2} ({:<8}): Kernel Linear->{:<10} | Kernel RBF->{:<10} | Kernel Poly->{:<10}'.format(i,Classes[o3testClass[i][0]],AnomResults[L1[i]],AnomResults[L2[i]],AnomResults[L3[i]]))
-        
-#         #Linear
-#         if AnomResults[L1[i]] == "Anomaly":
-#             if o3testClass[i][0] != 3:
-#                 fpL += 1
-#             else:
-#                 tpL += 1
-#         else:
-#             if o3testClass[i][0] != 3:
-#                 tnL += 1
-#             else:
-#                 fnL += 1
-#         #RBF
-#         if AnomResults[L2[i]] == "Anomaly":
-#             if o3testClass[i][0] != 3:
-#                 fpRBF += 1
-#             else:
-#                 tpRBF += 1
-#         else:
-#             if o3testClass[i][0] != 3:
-#                 tnRBF += 1
-#             else:
-#                 fnRBF += 1
-#         #Poly
-#         if AnomResults[L3[i]] == "Anomaly":
-#             if o3testClass[i][0] != 3:
-#                 fpP += 1
-#             else:
-#                 tpP += 1
-#         else:
-#             if o3testClass[i][0] != 3:
-#                 tnP += 1
-#             else:
-#                 fnP += 1
-
-# print("\nKernel Linear Statistics")
-# printStats(tpL, tnL, fpL, fnL)
-# print("\nKernel RBF Statistics")
-# printStats(tpRBF, tnRBF, fpRBF, fnRBF)
-# print("\nKernel Poly Statistics")
-# printStats(tpP, tnP, fpP, fnP)
-
-
-
-
-
-
-#############----Anomaly Detection based on One Class Support Vector Machines---#############
-#15
 from sklearn import svm
 
-print('\n-- Anomaly Detection based on One Class Support Vector Machines --')
-ocsvm = svm.OneClassSVM(gamma='scale',kernel='linear').fit(i2trainFeaturesN)  
-rbf_ocsvm = svm.OneClassSVM(gamma='scale',kernel='rbf').fit(i2trainFeaturesN)  
-poly_ocsvm = svm. OneClassSVM(gamma='scale',kernel='poly',degree=2).fit(i2trainFeaturesN)  
-
-L1=ocsvm.predict(i3AtestFeaturesN)
-L2=rbf_ocsvm.predict(i3AtestFeaturesN)
-L3=poly_ocsvm.predict(i3AtestFeaturesN)
-
-AnomResults={-1:"Anomaly",1:"OK"}
+print('\n-- Anomaly Detection based on One Class Support Vector Machines (PCA Features) --')
+ocsvm = svm.OneClassSVM(gamma='scale',kernel='linear').fit(trainFeaturesNPCA)  
+rbf_ocsvm = svm.OneClassSVM(gamma='scale',kernel='rbf').fit(trainFeaturesNPCA)  
+poly_ocsvm = svm. OneClassSVM(gamma='scale',kernel='poly',degree=2).fit(trainFeaturesNPCA)  
 
 tpL, tnL, fpL, fnL = 0, 0, 0, 0
 tpRBF, tnRBF, fpRBF, fnRBF = 0, 0, 0, 0
 tpP, tnP, fpP, fnP = 0, 0, 0, 0
 
-nObsTest,nFea=i3AtestFeaturesN.shape
-nObsClass,nFea=o3testClass.shape
-for i in range(nObsTest):
-    if i < nObsClass:
-        print('Obs: {:2} ({:<8}): Kernel Linear->{:<10} | Kernel RBF->{:<10} | Kernel Poly->{:<10}'.format(i,Classes[o3testClass[i][0]],AnomResults[L1[i]],AnomResults[L2[i]],AnomResults[L3[i]]))
-        
-        #Linear
-        if AnomResults[L1[i]] == "Anomaly":
-            if o3testClass[i][0] != 3:
-                fpL += 1
-            else:
-                tpL += 1
-        else:
-            if o3testClass[i][0] != 3:
-                tnL += 1
-            else:
-                fnL += 1
-        #RBF
-        if AnomResults[L2[i]] == "Anomaly":
-            if o3testClass[i][0] != 3:
-                fpRBF += 1
-            else:
-                tpRBF += 1
-        else:
-            if o3testClass[i][0] != 3:
-                tnRBF += 1
-            else:
-                fnRBF += 1
-        #Poly
-        if AnomResults[L3[i]] == "Anomaly":
-            if o3testClass[i][0] != 3:
-                fpP += 1
-            else:
-                tpP += 1
-        else:
-            if o3testClass[i][0] != 3:
-                tnP += 1
-            else:
-                fnP += 1
 
+L1=ocsvm.predict(AtestFeaturesNPCA)
+L2=rbf_ocsvm.predict(AtestFeaturesNPCA)
+L3=poly_ocsvm.predict(AtestFeaturesNPCA)
+
+AnomResults={-1:"Anomaly",1:"OK"}
+
+nObsTest,nFea=AtestFeaturesNPCA.shape
+for i in range(nObsTest):
+    #print('Obs: {:2} ({:<8}): Kernel Linear->{:<10} | Kernel RBF->{:<10} | Kernel Poly->{:<10}'.format(i,Classes[testClassAttacker[i][0]],AnomResults[L1[i]],AnomResults[L2[i]],AnomResults[L3[i]]))
+    
+    #Linear
+    if AnomResults[L1[i]] == "Anomaly":
+        tpL += 1
+    else:
+        fnL += 1
+    #RBF
+    if AnomResults[L2[i]] == "Anomaly":
+        tpRBF += 1
+    else:
+        fnRBF += 1
+    #Poly
+    if AnomResults[L3[i]] == "Anomaly":
+        tpP += 1
+    else:
+        fnP += 1
+
+
+L1=ocsvm.predict(CtestFeaturesNPCA)
+L2=rbf_ocsvm.predict(CtestFeaturesNPCA)
+L3=poly_ocsvm.predict(CtestFeaturesNPCA)
+
+nObsTest,nFea=CtestFeaturesNPCA.shape
+for i in range(nObsTest):
+    #print('Obs: {:2} ({:<8}): Kernel Linear->{:<10} | Kernel RBF->{:<10} | Kernel Poly->{:<10}'.format(i,Classes[testClassClient[i][0]],AnomResults[L1[i]],AnomResults[L2[i]],AnomResults[L3[i]]))
+    
+    #Linear
+    if AnomResults[L1[i]] == "Anomaly":
+        fpL += 1
+    else:
+        tnL += 1
+    #RBF
+    if AnomResults[L2[i]] == "Anomaly":
+        fpRBF += 1
+    else:
+        tnRBF += 1
+    #Poly
+    if AnomResults[L3[i]] == "Anomaly":
+        fpP += 1
+    else:
+        tnP += 1
+print("\nKernel Linear Statistics")
+printStats(tpL, tnL, fpL, fnL)
+print("\nKernel RBF Statistics")
+printStats(tpRBF, tnRBF, fpRBF, fnRBF)
+print("\nKernel Poly Statistics")
+printStats(tpP, tnP, fpP, fnP)
+
+
+
+
+
+
+
+
+
+
+
+#############----Anomaly Detection based on One Class Support Vector Machines ---#############
+#15
+from sklearn import svm
+
+print('\n-- Anomaly Detection based on One Class Support Vector Machines --')
+ocsvm = svm.OneClassSVM(gamma='scale',kernel='linear').fit(trainFeaturesN)  
+rbf_ocsvm = svm.OneClassSVM(gamma='scale',kernel='rbf').fit(trainFeaturesN)  
+poly_ocsvm = svm. OneClassSVM(gamma='scale',kernel='poly',degree=2).fit(trainFeaturesN)  
+
+tpL, tnL, fpL, fnL = 0, 0, 0, 0
+tpRBF, tnRBF, fpRBF, fnRBF = 0, 0, 0, 0
+tpP, tnP, fpP, fnP = 0, 0, 0, 0
+
+
+L1=ocsvm.predict(AtestFeaturesNA)
+L2=rbf_ocsvm.predict(AtestFeaturesNA)
+L3=poly_ocsvm.predict(AtestFeaturesNA)
+
+AnomResults={-1:"Anomaly",1:"OK"}
+
+nObsTest,nFea=AtestFeaturesNA.shape
+for i in range(nObsTest):
+    #print('Obs: {:2} ({:<8}): Kernel Linear->{:<10} | Kernel RBF->{:<10} | Kernel Poly->{:<10}'.format(i,Classes[testClassAttacker[i][0]],AnomResults[L1[i]],AnomResults[L2[i]],AnomResults[L3[i]]))
+    
+    #Linear
+    if AnomResults[L1[i]] == "Anomaly":
+        tpL += 1
+    else:
+        fnL += 1
+    #RBF
+    if AnomResults[L2[i]] == "Anomaly":
+        tpRBF += 1
+    else:
+        fnRBF += 1
+    #Poly
+    if AnomResults[L3[i]] == "Anomaly":
+        tpP += 1
+    else:
+        fnP += 1
+
+
+L1=ocsvm.predict(AtestFeaturesNC)
+L2=rbf_ocsvm.predict(AtestFeaturesNC)
+L3=poly_ocsvm.predict(AtestFeaturesNC)
+
+nObsTest,nFea=AtestFeaturesNC.shape
+for i in range(nObsTest):
+    #print('Obs: {:2} ({:<8}): Kernel Linear->{:<10} | Kernel RBF->{:<10} | Kernel Poly->{:<10}'.format(i,Classes[testClassClient[i][0]],AnomResults[L1[i]],AnomResults[L2[i]],AnomResults[L3[i]]))
+    
+    #Linear
+    if AnomResults[L1[i]] == "Anomaly":
+        fpL += 1
+    else:
+        tnL += 1
+    #RBF
+    if AnomResults[L2[i]] == "Anomaly":
+        fpRBF += 1
+    else:
+        tnRBF += 1
+    #Poly
+    if AnomResults[L3[i]] == "Anomaly":
+        fpP += 1
+    else:
+        tnP += 1
 print("\nKernel Linear Statistics")
 printStats(tpL, tnL, fpL, fnL)
 print("\nKernel RBF Statistics")

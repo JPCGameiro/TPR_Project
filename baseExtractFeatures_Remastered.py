@@ -65,28 +65,31 @@ def extractStatsSilenceActivity(data):
 def extractFeatures(dirname,basename,nObs,allwidths):
     for o in range(0,nObs):
         features=np.array([])
+        featuresS=np.array([])
         for oW in allwidths:
             obsfilename=dirname+"/"+basename+str(o)+"_w"+str(oW)+".dat"
             print(obsfilename)
             subdata=np.loadtxt(obsfilename)[:,1:]    #Loads data and removes first column (sample index)
                 
-            #faux=extractStats(subdata)    
-            #features=np.hstack((features,faux))
+            faux=extractStats(subdata)    
+            features=np.hstack((features,faux))
             
             faux2=extractStatsSilenceActivity(subdata)
-            features=np.hstack((features,faux2))
+            featuresS=np.hstack((featuresS,faux2))
+
         if o==0:
             obsFeatures=features
+            obsFeaturesS=featuresS
         else:
             obsFeatures=np.vstack((obsFeatures,features))
+            obsFeaturesS=np.vstack((obsFeaturesS,featuresS))
 
-    return obsFeatures
+    return obsFeatures,obsFeaturesS
 
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('-i', '--input', nargs='?',required=True, help='input dir')
     parser.add_argument('-w', '--widths', nargs='*',required=True, help='list of observation windows widths')
-    parser.add_argument('-o', '--output', nargs='?',required=False, help='output file')
     args=parser.parse_args()
     
     dirname=args.input
@@ -102,14 +105,14 @@ def main():
     
     features=extractFeatures(dirname,basename,nObs,allwidths)
     
-    if args.output is None:
-        outfilename=basename+"_features.dat"
-    else:
-        outfilename=args.output
+    outfilename=basename+"_features.dat"
+    outfilenameS=basename+"_Sfeatures.dat"
     
-    np.savetxt(outfilename,features,fmt='%d')
+    np.savetxt(outfilename,features[0],fmt='%d')
+    np.savetxt(outfilenameS,features[1],fmt='%d')
     
-    print(features.shape)
+    print(features[0].shape)
+    print(features[1].shape)
         
 
 if __name__ == '__main__':

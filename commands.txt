@@ -20,20 +20,8 @@
     -> python3 baseExtractFeatures_Remastered.py -i Captures/client3_d1_obs_s20 -w 120
     -> python3 baseExtractFeatures_Remastered.py -i Captures/attacker_d1_obs_s20 -w 120
     -> python3 baseExtractFeatures_Remastered.py -i goodAndBad_d1_obs_s20 -w 120
-    -> generates client1_d1_obs_features.dat, client2_d1_obs_features.dat, client1_d3_obs_features.dat, attacker_d1_obs_features.dat, goodAndBad_d1_obs_features.dat
-
-4) Silence Periods
-    -> Para extrair as features dos períodos de silêncio comentar as linhas 
-            #faux=extractStats(subdata)    
-            #features=np.hstack((features,faux))
-    -> Descomentar linhas
-            faux2=extractStatsSilenceActivity(subdata)
-            features=np.hstack((features,faux2)) 
-    -> Se apenas forem descomentadas as é feito o append das features dos períodos de silêncio ao ficheiro de features
-    I guess que mais vale ter um ficheiro de features separado (normal e outro com silêncio)
-    -> python3 baseExtractFeatures_Remastered.py -i Captures/client1_d1_obs_s20 -w 120 -o client1_d1_obs_Sfeatures.dat
-    -> python3 baseExtractFeatures_Remastered.py -i Captures/client2_d1_obs_s20 -w 120 -o client2_d1_obs_Sfeatures.dat
-    -> python3 baseExtractFeatures_Remastered.py -i Captures/client3_d1_obs_s20 -w 120 -o client3_d1_obs_Sfeatures.dat
-    -> python3 baseExtractFeatures_Remastered.py -i Captures/attacker_d1_obs_s20 -w 120 -o attacker_d1_obs_Sfeatures.dat
+    -> generates client1_d1_obs_features.dat, client1_d1_obs_Sfeatures.dat, client2_d1_obs_features.dat, client2_d1_obs_Sfeatures.dat,
+    client1_d3_obs_features.dat, client3_d1_obs_Sfeatures.dat, attacker_d1_obs_features.dat, attacker_d1_obs_Sfeatures.dat,
+    goodAndBad_d1_obs_features.dat, goodAndBad_d1_obs_Sfeatures.dat
 
 5)  Profiles

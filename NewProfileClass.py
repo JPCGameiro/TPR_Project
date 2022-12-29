@@ -58,6 +58,7 @@ features_c1=np.loadtxt("Captures/client1_d1_obs_features.dat")
 features_c2=np.loadtxt("Captures/client2_d1_obs_features.dat")
 features_c3=np.loadtxt("Captures/client3_d1_obs_features.dat")
 features_attacker=np.loadtxt("Captures/attacker_d1_obs_features.dat")
+
 #Returning arrays with ones of the size of the features extracted
 oClass_client=np.ones((len(features_c1)+len(features_c2),1))*0
 oClass_attacker=np.ones((len(features_attacker),1))*1
@@ -73,24 +74,42 @@ print('Classes Size: ', oClass.shape)
 #plt.figure(4)
 #plotFeatures(features,oClass,2,3) #0,27
 
+########### Silence Features #############
 
+features_c1S=np.loadtxt("Captures/client1_d1_obs_Sfeatures.dat")
+features_c2S=np.loadtxt("Captures/client2_d1_obs_Sfeatures.dat")
+features_c3S=np.loadtxt("Captures/client3_d1_obs_Sfeatures.dat")
+features_attackerS=np.loadtxt("Captures/attacker_d1_obs_Sfeatures.dat")
 
+featuresS=np.vstack((features_c1S,features_c2S,features_attackerS))
+oClass=np.vstack((oClass_client,oClass_attacker))
+print('Train Silence Features Size:',featuresS.shape)
+print('Classes Size: ', oClass.shape)
+
+# plt.figure(5)
+# plotFeatures(featuresS,oClass,0,2) #0,23
 
 #############----Feature Training----#############
 #:1
 #1 Build train features of normal behavior
 #   trainClassClient -> good behavior only
 trainFeaturesClient=np.vstack((features_c1,features_c2))
+trainFeaturesClientS=np.vstack((features_c1S,features_c2S))
+allTrainFeaturesClient=np.hstack((trainFeaturesClient,trainFeaturesClientS))
 trainClassClient=oClass_client
 
 #2 Build test features with attacker behavior
-#   o3testClass -> bad behavior for anomaly detection
+#   testClassAttacker -> bad behavior for anomaly detection
 testFeaturesAttacker=features_attacker
+testFeaturesAttackerS=features_attackerS
+allTestFeaturesAttacker=np.hstack((testFeaturesAttacker,testFeaturesAttackerS))
 testClassAttacker=oClass_attacker
 
 #3 Build test features with a clients good behavior
-#   o3testClass -> good behavior for anomaly detection
+#   testClassClient -> good behavior for anomaly detection
 testFeaturesClient=features_c3
+testFeaturesClientS=features_c3S
+allTestFeaturesClient=np.hstack((testFeaturesClient,testFeaturesClientS))
 testClassClient=oClass_client_test
 
 
@@ -100,6 +119,7 @@ testClassClient=oClass_client_test
 #############----Feature Normalization----#############
 from sklearn.preprocessing import MaxAbsScaler
 
+#Without silences
 #Normalize the train class
 trainScaler = MaxAbsScaler().fit(trainFeaturesClient)
 trainFeaturesN=trainScaler.transform(trainFeaturesClient)
@@ -108,6 +128,15 @@ trainFeaturesN=trainScaler.transform(trainFeaturesClient)
 AtestFeaturesNA=trainScaler.transform(testFeaturesAttacker)
 AtestFeaturesNC=trainScaler.transform(testFeaturesClient)
 
+# #With silences
+# #Normalize the train class
+# trainScaler = MaxAbsScaler().fit(allTrainFeaturesClient)
+# trainFeaturesN=trainScaler.transform(allTrainFeaturesClient)
+
+# ##Normalize test classes with the train Scalers
+# AtestFeaturesNA=trainScaler.transform(allTestFeaturesAttacker)
+# AtestFeaturesNC=trainScaler.transform(allTestFeaturesClient)
+
 
 # print("Mean of TrainFeatures")
 # print(np.mean(trainFeaturesN,axis=0))
@@ -115,9 +144,9 @@ AtestFeaturesNC=trainScaler.transform(testFeaturesClient)
 # print(np.std(trainFeaturesN,axis=0))
 
 # print("Mean of TestFeatures")
-# print(np.mean(AtestFeaturesN,axis=0))
+# print(np.mean(AtestFeaturesNA,axis=0))
 # print("Standard deviation of TestFeatures")
-# print(np.std(AtestFeaturesN,axis=0))
+# print(np.std(AtestFeaturesNA,axis=0))
 
 
 
@@ -126,7 +155,9 @@ AtestFeaturesNC=trainScaler.transform(testFeaturesClient)
 #############----Principal Components Analysis----#############
 from sklearn.decomposition import PCA
 
-pca = PCA(n_components=3, svd_solver='full')
+#without silences - pca 11 --> max range 13
+#with silences - pca 18 --> max range 18
+pca = PCA(n_components=11, svd_solver='full')
 
 #reduce train features data with PCA
 trainPCA=pca.fit(trainFeaturesN)
@@ -184,7 +215,7 @@ for i in range(nObsTest):
         result="OK"
         #False Negative
         fn += 1
-    #print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f}] -> Result -> {}'.format(i,Classes[testClassAttacker[i][0]],*dists,result))
+    # print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f}] -> Result -> {}'.format(i,Classes[testClassAttacker[i][0]],*dists,result))
 
 nObsTest,nFea=AtestFeaturesNC.shape
 for i in range(nObsTest):
@@ -198,7 +229,7 @@ for i in range(nObsTest):
         result="OK"
         #True Negative
         tn += 1
-    #print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f}] -> Result -> {}'.format(i,Classes[testClassClient[i][0]],*dists,result))
+    # print('Obs: {:2} ({}): Normalized Distances to Centroids: [{:.4f}] -> Result -> {}'.format(i,Classes[testClassClient[i][0]],*dists,result))
 
 printStats(tp, tn, fp, fn)
 
@@ -278,7 +309,7 @@ tn = 0 #True Negative
 fp = 0 #False Positive
 fn = 0 #False Negative
 
-AnomalyThreshold=0.05
+AnomalyThreshold=1.2
 nObsTest,nFea=AtestFeaturesNPCA.shape
 for i in range(nObsTest):
     x=AtestFeaturesNPCA[i,:]
@@ -292,7 +323,7 @@ for i in range(nObsTest):
         #False Negative
         fn += 1
     
-    #print('Obs: {:2} ({}): Probabilities: [{:.4e}] -> Result -> {}'.format(i,Classes[testClassAttacker[i][0]],*probs,result))
+    # print('Obs: {:2} ({}): Probabilities: [{:.4e}] -> Result -> {}'.format(i,Classes[testClassAttacker[i][0]],*probs,result))
 
 nObsTest,nFea=CtestFeaturesNPCA.shape
 for i in range(nObsTest):
@@ -307,7 +338,7 @@ for i in range(nObsTest):
         #True Negative
         tn += 1
     
-    #print('Obs: {:2} ({}): Probabilities: [{:.4e}] -> Result -> {}'.format(i,Classes[testClassClient[i][0]],*probs,result))
+    # print('Obs: {:2} ({}): Probabilities: [{:.4e}] -> Result -> {}'.format(i,Classes[testClassClient[i][0]],*probs,result))
 #Print statistics   
 printStats(tp, tn, fp, fn)
 

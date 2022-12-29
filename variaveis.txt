@@ -18,3 +18,13 @@ ExtractFeatures:
 mean, median, std, percentil 75, p 90, p 95, p98
 
 mean, mean, mean, mean, median, median, median, median, ....
+
+
+
+c1, c2 - treino
+c3, attacker - teste
+
+
+minimizar os falsos positivos -- nao queremos bloquear trafego de coisas licitas
+
+falsos negativos - podemos abdicar, n detetou o atacante agr pode detetar mais tarde

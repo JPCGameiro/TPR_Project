@@ -72,7 +72,7 @@ print('Classes Size: ', oClass.shape)
 
 #Plot features
 #plt.figure(4)
-#plotFeatures(features,oClass,2,3) #0,27
+#plotFeatures(features,oClass,0,1) #0,27
 
 ########### Silence Features #############
 
@@ -173,18 +173,21 @@ CtestFeaturesNPCA = trainPCA.transform(AtestFeaturesNC)
 # plt.figure(8)
 # plotFeatures(trainFeaturesNPCA,trainClassClient,0,1)
 
-# #Plot test PCA fratures
+# #Plot attacker test PCA fratures
 # print(AtestFeaturesNPCA.shape,testClassAttacker.shape)
 # plt.figure(8)
 # plotFeatures(AtestFeaturesNPCA,testClassAttacker,0,1)
 
-# #Plot test PCA fratures
+# #Plot client test PCA fratures
 # print(CtestFeaturesNPCA.shape,testClassClient.shape)
 # plt.figure(8)
 # plotFeatures(CtestFeaturesNPCA,testClassClient,0,1)
 
-
-
+#Plot all train and attacker/client test features together
+pltFeatures=np.vstack((trainFeaturesNPCA,AtestFeaturesNPCA, CtestFeaturesNPCA))
+pltClasses=np.vstack((trainClassClient, testClassAttacker, testClassClient))
+plt.figure(8)
+plotFeatures(pltFeatures,pltClasses,8,4)
 
 
 
@@ -195,6 +198,7 @@ centroids={}
 pClass=(trainClassClient==0).flatten() #Client Class = 0
 centroids.update({0:np.mean(trainFeaturesN[pClass,:],axis=0)})
 print('All Features Centroids:\n',centroids)
+
 
 tp = 0 #True Positive
 tn = 0 #True Negative

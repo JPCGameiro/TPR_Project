@@ -1,7 +1,0 @@
-Criar dois pca? um para modelos sem atacante e outro para com o atacante
-
-NºComponentes do PCA do atacante será que deve ser 4?
-
-modelos de treino? n percebbo nada que mais será que temos de criar?
-
-Mexer nos parâmetros e thresholds para detetar melhor ataques????

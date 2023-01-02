@@ -8,6 +8,11 @@ from sklearn.decomposition import PCA
 import time
 import sys
 import warnings
+from sklearn.preprocessing import MaxAbsScaler
+from scipy.stats import multivariate_normal
+from sklearn import svm
+
+
 warnings.filterwarnings('ignore')
 
 
@@ -145,7 +150,6 @@ def detect_anomaly(nComponents, choice, silence):
 
 
     #############----Feature Normalization----#############
-    from sklearn.preprocessing import MaxAbsScaler
 
     #Normalize the train class
     trainScaler = MaxAbsScaler().fit(allTrainFeaturesClient)
@@ -161,7 +165,6 @@ def detect_anomaly(nComponents, choice, silence):
 
 
     #############----Principal Components Analysis----#############
-    from sklearn.decomposition import PCA
 
     #without silences - pca 11 --> max range 13
     #with silences - pca 18 --> max range 18
@@ -179,7 +182,6 @@ def detect_anomaly(nComponents, choice, silence):
 
     if choice==1:
         #############----Anomaly Detection based on centroids distances (PCA Features)----#############
-        from sklearn.preprocessing import MaxAbsScaler
         #12
         centroids={}
         pClass=(trainClassClient==0).flatten() #Client Class = 0
@@ -226,7 +228,6 @@ def detect_anomaly(nComponents, choice, silence):
     elif choice==2:
         #############----Anomaly Detection based Multivariate (PCA Features)---#############
         #13 ---- Este aqui é o que parece dar melhor
-        from scipy.stats import multivariate_normal
         #print('\n-- Anomaly Detection based Multivariate PDF (PCA Features) --')
         means={}
         pClass=(trainClassClient==0).flatten() #Client Class = 0
@@ -280,7 +281,6 @@ def detect_anomaly(nComponents, choice, silence):
     elif choice==3:
         #############----Anomaly Detection based on One Class Support Vector Machines (PCA Features)---#############
         #14
-        from sklearn import svm
 
         #print('\n-- Anomaly Detection based on One Class Support Vector Machines (PCA Features) --')
         ocsvm = svm.OneClassSVM(gamma='scale',kernel='linear').fit(trainFeaturesNPCA)  

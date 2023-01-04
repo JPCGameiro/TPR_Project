@@ -17,7 +17,26 @@ ExtractFeatures:
 
 mean, median, std, percentil 75, p 90, p 95, p98
 
-mean, mean, mean, mean, median, median, median, median, ....
+meanUpPkt, meanUpByt, meanDoPkt, meanDoByt, 
+medianUpPkt, medianUpByt, medianDoPkt, medianDoByt, 
+stdUpPkt, stdUpByt, stdDoPkt, stdDoBy,
+75UpPkt, 90UpPkt, 95UpPkt, 98UpPkt,
+75UpByt, 90UpByt, 95UpByt, 98UpByt,
+75DoPkt, 90DoPkt, 95DoPkt, 98DoPkt,
+75DoByt, 90DoByt, 95DoByt, 98DoByt
+
+Silence&ActivityFeatures:
+sizeSUpPkt, meanSUpPkt, stdSUpPkt,
+sizeSUpByt, meanSUpByt, stdSUpByt,
+sizeSDoPkt, meanSDoPkt, stdSDoPkt,
+sizeSDoByt, meanSDoByt, stdSDoByt,
+sizeAUpPkt, meanAUpPkt, stdAUpPkt,
+sizeAUpByt, meanAUpByt, stdAUpByt,
+sizeADoPkt, meanADoPkt, stdADoPkt,
+sizeADoByt, meanADoByt, stdADoByt
+
+
+
 
 
 

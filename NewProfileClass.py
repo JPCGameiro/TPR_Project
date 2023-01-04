@@ -71,8 +71,8 @@ print('Train Stats Features Size:',features.shape)
 print('Classes Size: ', oClass.shape)
 
 #Plot features
-#plt.figure(4)
-#plotFeatures(features,oClass,0,1) #0,27
+plt.figure(4)
+plotFeatures(features,oClass,11,27) #0,27
 
 ########### Silence Features #############
 
@@ -87,7 +87,11 @@ print('Train Silence Features Size:',featuresS.shape)
 print('Classes Size: ', oClass.shape)
 
 # plt.figure(5)
-# plotFeatures(featuresS,oClass,0,2) #0,23
+# plotFeatures(featuresS,oClass,18,20) #0,23
+# exit(0)
+
+
+
 
 #############----Feature Training----#############
 #:1
@@ -186,9 +190,11 @@ CtestFeaturesNPCA = trainPCA.transform(AtestFeaturesNC)
 #Plot all train and attacker/client test features together
 pltFeatures=np.vstack((trainFeaturesNPCA,AtestFeaturesNPCA, CtestFeaturesNPCA))
 pltClasses=np.vstack((trainClassClient, testClassAttacker, testClassClient))
+print(AtestFeaturesNPCA.shape,testClassAttacker.shape)
+print(trainFeaturesNPCA.shape,trainClassClient.shape)
 plt.figure(8)
-plotFeatures(pltFeatures,pltClasses,8,4)
-
+plotFeatures(pltFeatures,pltClasses,1,2)
+plotFeatures(pltFeatures,pltClasses,10,8)
 
 
 #############----Anomaly Detection based on centroids distances----#############
@@ -313,7 +319,7 @@ tn = 0 #True Negative
 fp = 0 #False Positive
 fn = 0 #False Negative
 
-AnomalyThreshold=1.2
+AnomalyThreshold=0.05
 nObsTest,nFea=AtestFeaturesNPCA.shape
 for i in range(nObsTest):
     x=AtestFeaturesNPCA[i,:]
